@@ -3,102 +3,147 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sehat Buddy — Report Chat (Dark)</title>
+  <title>Sehat Buddy — Report Chat</title>
   <meta name="description" content="Mobile-first Hinglish health-report chatbot (Dark Mode) with auto model routing." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      /* Dark iOS-inspired palette */
-      --bg:#0b1220;
-      --bg-2:#0e1426;
-      --card:#0d1324;
-      --border:#1b2540;
-      --text:#e6ebff;
-      --muted:#9aa4c7;
+      /* Dark mode palette (soft, low-contrast, iOS-like) */
+      --bg:#0b0f16;
+      --bg-2:#0f141d;
+      --card:#121a24;
+      --border:#1b2534;
+      --text:#eef3ff;
+      --muted:#9aa6bf;
       --accent:#0a84ff; /* iOS blue */
-      --bubble-ai:#0f1b34;
-      --bubble-user:#14203b;
-      --shadow:0 14px 40px rgba(0,0,0,0.35);
-      --radius:22px;
-      --radius-lg:28px;
+      --bubble-ai:#121a24;
+      --bubble-user:#0f1b2c;
+      --shadow:0 8px 22px rgba(0,0,0,0.28);
+      --radius:18px;
+      --radius-lg:22px;
     }
     /* Light theme overrides */
     :root[data-theme="light"]{
       --bg:#f5f7fb;
       --bg-2:#ffffff;
       --card:#ffffff;
-      --border:#d7dcee;
+      --border:#e6e9f2;
       --text:#0b1220;
-      --muted:#5b678a;
+      --muted:#6a7288;
       --accent:#0a84ff;
-      --bubble-ai:#f1f4fb;
-      --bubble-user:#e9f2ff;
-      --shadow:0 8px 28px rgba(0,0,0,0.08);
+      --bubble-ai:#f6f8fc;
+      --bubble-user:#eef5ff;
+      --shadow:0 10px 20px rgba(0,0,0,0.06);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; font-family:-apple-system, BlinkMacSystemFont, Inter, Segoe UI, Roboto, Arial, sans-serif; color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 80% -200px, rgba(40,70,160,0.25), transparent),
-        radial-gradient(900px 700px at -10% -150px, rgba(20,140,255,0.18), transparent),
-        linear-gradient(180deg, var(--bg), var(--bg-2));
+      background: linear-gradient(180deg, var(--bg), var(--bg-2));
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     }
-    .app{min-height:100dvh; display:flex; flex-direction:column; max-width:800px; margin:0 auto}
+    .app{min-height:100dvh; display:flex; flex-direction:column; max-width:720px; margin:0 auto}
 
     /* Minimal top bar */
-    .top{position:sticky; top:0; z-index:20; backdrop-filter:saturate(180%) blur(12px); background:rgba(10,14,24,0.6); border-bottom:1px solid var(--border)}
-    .brand{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px}
-    .brand-left{display:flex; align-items:center; gap:12px}
-    .mark{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,#0a84ff,#64d2ff); color:#fff; display:grid; place-items:center; font-weight:700; box-shadow:var(--shadow)}
-    .title{font-size:17px; font-weight:700}
-    .sub{font-size:12px; color:var(--muted)}
-      .brand-right{display:flex; align-items:center; gap:8px}
-      .modeltag{font-size:11px;color:var(--muted);border:1px solid var(--border);padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.04)}
+    .top{position:sticky; top:0; z-index:20; backdrop-filter:saturate(180%) blur(18px); background:rgba(10,14,24,0.55); border-bottom:1px solid var(--border)}
+    :root[data-theme="light"] .top{background:rgba(255,255,255,0.72);}
+    .brand{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 12px}
+    .brand-left{display:flex; align-items:center; gap:8px}
+    .mark{width:28px; height:28px; border-radius:9px; background:linear-gradient(135deg,#0a84ff,#64d2ff); color:#fff; display:grid; place-items:center; font-weight:700}
+    .title{font-size:15px; font-weight:700; letter-spacing:-0.01em}
+    .sub{font-size:10.5px; color:var(--muted)}
+      .brand-right{display:flex; align-items:center; gap:6px; flex-wrap:nowrap}
+      .modeltag{max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px;color:var(--muted);border:1px solid var(--border);padding:4px 12px;border-radius:999px;background:rgba(255,255,255,0.04)}
       :root[data-theme="light"] .modeltag{background:rgba(0,0,0,0.03)}
-      .iconbtn{width:32px; height:32px; display:grid; place-items:center; border-radius:999px; border:1px solid var(--border); background:var(--card); color:var(--text); cursor:pointer}
+      .iconbtn{width:28px; height:28px; display:grid; place-items:center; border-radius:999px; border:1px solid var(--border); background:var(--card); color:var(--text); cursor:pointer}
       .iconbtn:active{transform:scale(0.97)}
 
+    @media (max-width: 420px){
+      .brand{flex-direction:column; align-items:flex-start; gap:6px}
+      .brand-right{width:100%; flex-wrap:wrap}
+      .modeltag{flex:1 1 100%; order:0}
+      .iconbtn{order:1}
+    }
+
+      /* Thinking chip */
+      .thinking{display:inline-flex; align-items:center; gap:8px; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; color:var(--muted); border:1px solid var(--border); padding:4px 10px; border-radius:999px; background:rgba(255,255,255,0.04)}
+      .thinking .spin{width:14px; height:14px; border:2px solid var(--muted); border-top-color:transparent; border-radius:50%; display:inline-block; animation:sbspin .9s linear infinite}
+      @keyframes sbspin{to{transform:rotate(360deg)}}
+
     /* Chat */
-    .chat{flex:1; padding:12px 14px; display:flex; flex-direction:column; gap:12px; overflow:auto; scroll-behavior:smooth}
-    .bubble{max-width:86%; padding:12px 14px; border-radius:18px; border:1px solid var(--border); box-shadow:var(--shadow); white-space:pre-wrap; line-height:1.45; font-size:16px}
-    .from-user{align-self:flex-end; background:var(--bubble-user)}
-    .from-ai{align-self:flex-start; background:var(--bubble-ai)}
+    .chat{flex:1; padding:8px 10px; display:flex; flex-direction:column; gap:8px; overflow:auto; scroll-behavior:smooth}
+    @media (max-width:420px){ .chat{padding:6px 8px; gap:6px} }
+    .bubble{max-width:90%; padding:10px 12px; border-radius:16px; border:1px solid transparent; box-shadow:none; white-space:pre-wrap; line-height:1.5; font-size:15px; -webkit-font-smoothing:antialiased}
+    @media (max-width:420px){ .bubble{font-size:14px; border-radius:14px; padding:9px 11px} }
+    .from-user{align-self:flex-end; background:var(--bubble-user);}
+    .from-ai{align-self:flex-start; background:var(--bubble-ai);}
 
     /* Uploader — single big tile */
-    .uploader{padding:14px}
-    #uploadTile{display:grid; place-items:center; width:100%; height:220px; border:1px solid var(--border); border-radius:var(--radius-lg); background:linear-gradient(180deg, #0f172a, #0b1220); box-shadow:var(--shadow); cursor:pointer; user-select:none}
+    .uploader{padding:8px 12px}
+    #uploadTile{display:grid; place-items:center; width:100%; height:148px; border:1px dashed var(--border); border-radius:var(--radius-lg); background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05)); cursor:pointer; user-select:none}
+    :root[data-theme="light"] #uploadTile{background:linear-gradient(180deg,#ffffff,#f8faff)}
     #uploadTile:active{transform:scale(0.997)}
-    .plus{display:flex; flex-direction:column; align-items:center; gap:10px; color:var(--muted)}
-    .plus-icon{width:72px; height:72px; border-radius:22px; display:grid; place-items:center; background:#101a2e; border:1px solid var(--border)}
-    .plus-icon svg{width:28px; height:28px; color:#cbd5ff}
-    .plus-label{font-size:15px}
+    .plus{display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--muted)}
+    .plus-icon{width:48px; height:48px; border-radius:14px; display:grid; place-items:center; background:#0f1722; border:1px solid var(--border)}
+    :root[data-theme="light"] .plus-icon{background:#f4f7ff}
+    .plus-icon svg{width:24px; height:24px; color:#b8c6ff}
+    :root[data-theme="light"] .plus-icon svg{color:#6580ff}
+    .plus-label{font-size:14px}
     .thumbWrap{width:100%; height:100%; overflow:hidden; border-radius:inherit}
     .thumbWrap img{width:100%; height:100%; object-fit:cover}
 
     /* Composer */
-    .composer{position:sticky; bottom:0; z-index:15; padding:10px 12px 18px; background:linear-gradient(180deg, rgba(11,18,32,0), rgba(11,18,32,0.75) 30%, #0b1220)}
-    .field{display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; border:1px solid var(--border); border-radius:26px; padding:10px 12px; background:var(--card); box-shadow:var(--shadow)}
-    textarea{resize:none; min-height:72px; max-height:40vh; border:none; outline:none; font-size:18px; padding:8px 10px; width:100%; background:transparent; color:var(--text)}
+    .composer{position:sticky; bottom:0; z-index:50; padding:6px 10px calc(12px + env(safe-area-inset-bottom)); background:linear-gradient(180deg, rgba(11,18,32,0), rgba(11,18,32,0.75) 30%, #0b1220)}
+    :root[data-theme="light"] .composer{background:linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.78) 30%, #ffffff)}
+    .field{display:grid; grid-template-columns:1fr auto; gap:8px; align-items:end; border:1px solid var(--border); border-radius:18px; padding:8px 10px; background:var(--card); -webkit-backdrop-filter:saturate(180%) blur(10px); backdrop-filter:saturate(180%) blur(10px)}
+    :root[data-theme="light"] .field{background:rgba(255,255,255,0.86)}
+    textarea{resize:none; min-height:52px; max-height:40vh; border:none; outline:none; font-size:15px; padding:6px 6px; width:100%; background:transparent; color:var(--text); -webkit-tap-highlight-color: transparent}
     textarea::placeholder{color:#94a3b8}
-    .send{appearance:none; border:none; outline:none; border-radius:999px; width:56px; height:56px; display:grid; place-items:center; font-weight:700; cursor:pointer; background:#0a84ff; color:white; box-shadow:0 10px 25px rgba(10,132,255,0.35)}
+    :root[data-theme="light"] textarea::placeholder{color:#8a93a6}
+    .send{appearance:none; border:none; outline:none; border-radius:999px; width:42px; height:42px; display:grid; place-items:center; font-weight:700; cursor:pointer; background:#0a84ff; color:white; box-shadow:0 8px 20px rgba(10,132,255,0.22)}
     .send:disabled{opacity:.6}
 
     /* Hint */
-    .hint{font-size:12px; color:var(--muted); padding:0 16px 10px}
+    .hint{font-size:12px; color:var(--muted); padding:0 16px 10px; max-height:120px; overflow:hidden; transition:max-height .28s ease, opacity .18s ease, padding .28s ease}
+    .hint.collapsed{max-height:0; opacity:0; padding:0 16px 0}
 
-      /* Suggestions */
-      .suggestions{display:flex; flex-wrap:wrap; gap:8px; padding:8px 14px 6px}
-      .sugg{font-size:13px; color:var(--text); background:var(--card); border:1px solid var(--border); padding:8px 10px; border-radius:999px; cursor:pointer; box-shadow:var(--shadow)}
-      .sugg:active{transform:scale(0.98)}
-      .sugg-label{font-size:12px; color:var(--muted); padding:0 16px 6px}
+      /* Suggestions Overlay (glass, full screen) */
+      .suggOverlay{position:fixed; inset:0; z-index:60; display:none; pointer-events:none; background:transparent}
+      :root[data-theme="light"] .suggOverlay{background:transparent}
+      .suggOverlay.show{display:block}
+      .suggSheet{position:fixed; left:12px; right:12px; bottom:88px; display:flex; flex-direction:column; gap:10px; pointer-events:auto;
+        padding:12px; border-radius:18px; border:1px solid var(--border);
+        background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+        -webkit-backdrop-filter:saturate(180%) blur(16px); backdrop-filter:saturate(180%) blur(16px);
+        box-shadow:0 18px 36px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.10);
+        transform: translateY(8px); opacity:0; transition: transform .18s ease, opacity .18s ease;
+      }
+      .suggOverlay.show .suggSheet{transform:translateY(0); opacity:1}
+      /* Suggestions slider has no header/boundary; just list items over the frosted sheet */
+      .suggHeader{display:none}
+      .suggList{max-height:38vh; overflow:auto; display:flex; flex-direction:column; gap:8px}
+      .suggestions{all:unset; display:block}
+      .sugg{width:100%; text-align:left; font-size:15px; color:var(--text); background:transparent; border:none; padding:8px 6px; border-radius:10px; cursor:pointer}
+      :root[data-theme="light"] .sugg{background:transparent}
+      .sugg:active{transform:scale(0.995)}
+      .sugg-label{all:unset}
+
+      /* Light mode background refinement */
+      :root[data-theme="light"] body{
+        background: linear-gradient(180deg, var(--bg), var(--bg-2));
+      }
+
+      /* Focus styles for accessibility */
+      .iconbtn:focus-visible, .sugg:focus-visible, #uploadTile:focus-visible, .send:focus-visible{
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
 
     @media (min-width:768px){
-      #uploadTile{height:260px}
-      textarea{min-height:96px}
+      #uploadTile{height:200px}
+      textarea{min-height:72px}
     }
   </style>
 </head>
@@ -114,7 +159,7 @@
           </div>
         </div>
         <div class="brand-right">
-          <div class="modeltag" id="modelTag" title="Auto model selection">Model: gpt-5-mini • Effort: medium (auto)</div>
+          <div class="modeltag" id="modelTag" title="Auto model selection">gpt‑5‑mini • effort: medium (auto)</div>
           <button class="iconbtn" id="newChatBtn" title="New chat" aria-label="New chat">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
@@ -141,8 +186,17 @@
       <div class="hint">Sirf **ek** image add hogi. Zarurat ho to nayi image add karke purani replace ho jayegi.</div>
     </div>
 
-    <div class="sugg-label" id="suggLabel" hidden>Smart suggestions</div>
-    <div class="suggestions" id="suggestions"></div>
+    <div class="suggOverlay" id="suggOverlay" role="dialog" aria-modal="true" hidden>
+      <div class="suggSheet">
+        <div class="suggHeader">
+          <div class="suggTitle" id="suggLabel">Smart suggestions</div>
+          <button class="suggClose" id="suggClose" aria-label="Close suggestions">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="suggList suggestions" id="suggestions"></div>
+      </div>
+    </div>
 
     <div class="composer">
       <div class="field">
@@ -151,7 +205,7 @@
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><path d="m4 12 7-7m-7 7 7 7m9-7H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
       </div>
-      <div class="hint">Privacy: Yahan hum data store nahi karte. Par jawab ke liye OpenAI ko bhejna padta hai. Personal details share na karein. Yeh general info hai; final salah ke liye apne doctor se milen.</div>
+      <div class="hint" id="privacyHint">Privacy: Yahan hum data store nahi karte. Par jawab ke liye OpenAI ko bhejna padta hai. Personal details share na karein. Yeh general info hai; final salah ke liye apne doctor se milen.</div>
     </div>
   </div>
 
@@ -189,8 +243,14 @@
     const newChatBtn = document.getElementById('newChatBtn');
     const suggestionsEl = document.getElementById('suggestions');
     const suggLabelEl = document.getElementById('suggLabel');
+    const suggOverlayEl = document.getElementById('suggOverlay');
+    const suggCloseBtn = document.getElementById('suggClose');
+    const suggSheetEl = document.querySelector('.suggSheet');
+    const composerFieldEl = document.querySelector('.composer .field');
+    const thinkingTag = document.getElementById('thinkingTag');
+    const privacyHint = document.getElementById('privacyHint');
 
-    const SYSTEM_PROMPT = `Aap *Sehat Buddy* hain — ek simple Hinglish health-report explainer Indian mom ke liye.\n\nSTYLE:\n- Seedhi, pyaari Hinglish. Bullet points. Emojis thode theek.\n- \u26a0\ufe0f Doctor nahi hain — diagnosis/medicine prescribe mat kariye.\n- Red flags par urgent care suggest kariye.\n\nINPUT: sirf image, sirf text, ya dono. Image aaye to OCR soch ke key points nikaaliye.\n\nMEDICINE/PRESCRIPTION ho to batayein: Name, Use, Common side effects, Serious side effects (red flags), How to take (generic), Interactions, Precautions, Missed dose tip, Storage, Doctor se puchhne layak sawaal.\n\nLAB/SCAN REPORT ho to batayein: Highlights (3–5), Test-wise notes (result vs reference, simple meaning), Possible reasons (non-diagnostic), Lifestyle tips, Doctor ke sawaal, Missing info, Next steps, Confidence. Agar image diya ho to 8–10 image-specific observations (date, lab name, initials only, units, ref ranges, arrows, specimen, method, comments, stamp/sign, legibility).\n\nFORMAT (Hinglish):\n- 1–2 line summary, phir headings: Report/Meds Name, Highlights, Side Effects, Test-wise Notes, Possible Reasons (non-diagnostic), Lifestyle Tips, Doctor se poochne layak sawaal, Missing info, Next steps, Confidence, Image-specific points.\n- Crisp 150–250 words jab tak zyada detail na maange.\n- Agar image unreadable ho to politely better photo maangein.\n- End line: \"Yeh general info hai. Apne doctor se confirm zaroor karein.\"`;
+    const SYSTEM_PROMPT = `Tum *Sehat Buddy* ho — ek warm, professional female health guide (nurse-style) jo Indian families ko simple Hinglish me samjhati hai.\n\nSMART RESPONSE POLICY:\n- Pehle intent samjho; uske hisaab se sirf relevant cheezein likho. Template kabhi force mat karo.\n- Tone: gentle, practical, confident; thodi si emotions ok (\"main saath hoon💙\"), par over-cute nahi.\n- Style: short lines, crisp bullets; 90–160 words typical.\n- Emojis/quotes: zarurat ho tab 1–3 max; bina context mat daalo.\n- Safety: \u26a0\ufe0f Diagnosis/medicine prescribe nahi. Red flags dikhe to clear warning + action.\n- Missing info ho to ant me 1–2 follow‑up sawaal hi poochho (inline).\n- Agar sirf hello/thanks ho to ultra‑brief response.\n- Image aayi to OCR-soch se sirf jo dikh raha hai wohi batana; unreadable ho to politely better photo maangna.\n\nHOW TO ANSWER (adaptive):\n- Reports: 1–2 line summary ➜ 3–5 key points (result vs range, simple meaning) ➜ \"What to watch\" ➜ Next steps.\n- Medicines: kya hai, kyun diya jata, common vs serious side‑effects (red‑flag), generic how‑to.\n- Symptom/monitoring requests (jaise temperature note): chhota checklist + when to worry; template sirf tab dena jab user explicitly bole \"template\"/\"format\".\n- Kabhi bhi khokla section (e.g., \"Image-specific points: N/A\") mat likho.\n- Ek final line me disclaimer do: \"Yeh general info hai; apne doctor se confirm karein.\"\n\nOUTPUT (JSON only):\nReturn ek single JSON object: {\n  \"reply\": string (Hinglish, female voice, concise, adaptive),\n  \"suggestions\": string[2] (8–12 words, patient-style prompts, safe)\n}. JSON ke bahar kuch nahi.`;
 
     let currentImageDataUrl = null; // data URL for single image
     const history = [];
@@ -236,12 +296,50 @@
       const target = e.target.closest('[data-suggestion]');
       if(!target) return;
       input.value = target.getAttribute('data-suggestion') || '';
+      closeSuggestionsOverlay();
       onSend();
     });
 
+    // Open suggestions on input focus (overlay sits behind composer so typing still possible)
+    input.addEventListener('focus', ()=>{ openSuggestionsOverlay(); positionSuggestionsOverlay(); });
+    // Close when clicking anywhere
+    document.addEventListener('click', (e)=>{
+      const within = e.target.closest('.suggSheet') || e.target.closest('#userInput');
+      if(!within) closeSuggestionsOverlay();
+    });
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeSuggestionsOverlay(); });
+    window.addEventListener('resize', positionSuggestionsOverlay);
+    window.addEventListener('orientationchange', positionSuggestionsOverlay);
+
+    function positionSuggestionsOverlay(){
+      if(!composerFieldEl || !suggSheetEl) return;
+      const rect = composerFieldEl.getBoundingClientRect();
+      const bottom = Math.max(window.innerHeight - Math.round(rect.top) + 6, 0); // lift a little above
+      suggSheetEl.style.bottom = `${bottom}px`;
+    }
+
+    function openSuggestionsOverlay(){
+      suggOverlayEl.hidden = false;
+      suggOverlayEl.classList.add('show');
+      // Keep body scroll to allow chat context while overlay is open; composer is above overlay
+    }
+    function closeSuggestionsOverlay(){
+      suggOverlayEl.classList.remove('show');
+      suggOverlayEl.hidden = true;
+      // restore if we had changed any global scroll (we didn't)
+    }
+
+    let requestInFlight = false;
     async function onSend(){
+      if(requestInFlight) return; // avoid duplicate sends
       const text = input.value.trim();
       if(!text && !currentImageDataUrl){ alert('Kuch likhiye ya image add kijiye.'); return; }
+
+      // Immediately lock UI for current request
+      requestInFlight = true;
+      sendBtn.disabled = true;
+      sendBtn.setAttribute('aria-disabled','true');
+      closeSuggestionsOverlay();
 
       if(history.length === 0){ history.push({ role:'system', content:[{type:'input_text', text: SYSTEM_PROMPT}] }); }
 
@@ -258,7 +356,12 @@
 
       input.value = '';
       currentImageDataUrl = null; plusState.hidden = false; thumbWrap.hidden = true; thumbWrap.innerHTML='';
-      sendBtn.disabled = true;
+      showThinking(true);
+
+      // Collapse privacy hint after the first outgoing request
+      if(privacyHint && !privacyHint.classList.contains('collapsed')){
+        privacyHint.classList.add('collapsed');
+      }
 
       const aiBubble = addBubble('…', 'ai');
       try{
@@ -270,16 +373,25 @@
           stream: true,
           store: false
         }, API_KEY, aiBubble);
-        // After each response, generate follow-up suggestions
-        generateFollowupSuggestions(responseText, text);
       }catch(err){
         console.error(err);
         aiBubble.innerHTML = `<b style="color:#ff6b6b">Error:</b> ${escapeHtml(err.message||err)}`;
-      }finally{ sendBtn.disabled = false; }
+      }finally{ sendBtn.disabled = false; sendBtn.removeAttribute('aria-disabled'); requestInFlight = false; showThinking(false); }
     }
 
     function updateModelTag(model, effort){
-      modelTag.textContent = `Model: ${model} • Effort: ${effort} (auto)`;
+      const effortWord = effort === 'high' ? 'deep' : effort === 'medium' ? 'balanced' : 'light';
+      const name = model.replace(/-/g,'‑'); // use non-breaking hyphen for nicer chip
+      modelTag.textContent = `${name} • ${effortWord} reasoning`;
+    }
+
+    function showThinking(isOn){
+      // Render a lightweight inline "Thinking…" loader in the last AI bubble
+      const last = chat.lastElementChild;
+      if(!(last && last.classList.contains('from-ai'))) return;
+      if(isOn){
+        last.innerHTML = '<span style="display:inline-flex; align-items:center; gap:8px"><span class="spin" style="width:14px;height:14px;border:2px solid var(--muted);border-top-color:transparent;border-radius:50%;display:inline-block;animation: sbspin .9s linear infinite"></span> Thinking…</span>';
+      }
     }
 
     // Auto model routing using gpt-5-mini (with safe fallback)
@@ -353,6 +465,7 @@
       const decoder = new TextDecoder('utf-8');
       let fullText = '';
       let sseBuffer = '';
+      const isJsonFormat = false; // text-only streaming; JSON shaped via prompt examples
 
       while(true){
         const {done, value} = await reader.read();
@@ -369,19 +482,42 @@
           try{
             const evt = JSON.parse(data);
             if(evt.type === 'response.output_text.delta' && typeof evt.delta === 'string'){
-              fullText += evt.delta; bubbleEl.textContent = fullText; chat.scrollTop = chat.scrollHeight;
+              fullText += evt.delta;
             } else if(evt.type === 'message.delta' && evt.delta?.content?.length){
               const piece = evt.delta.content.map(p=>p.text || '').join('');
-              fullText += piece; bubbleEl.textContent = fullText; chat.scrollTop = chat.scrollHeight;
+              fullText += piece;
             } else if(typeof evt.output_text === 'string'){
-              fullText += evt.output_text; bubbleEl.textContent = fullText; chat.scrollTop = chat.scrollHeight;
+              fullText += evt.output_text;
+            }
+            if(isJsonFormat){
+              const prog = extractReplyProgressive(fullText);
+              if(prog && typeof prog.text === 'string'){
+                bubbleEl.textContent = prog.text; chat.scrollTop = chat.scrollHeight;
+              }
+            } else {
+              bubbleEl.textContent = fullText; chat.scrollTop = chat.scrollHeight;
             }
           }catch(e){ /* Agar JSON half aya ho to next chunk me complete hoga */ }
         }
       }
+      let displayText = fullText;
+      // Try to parse final JSON object from text to also pick suggestions
+      let obj = null;
+      try{ obj = JSON.parse(fullText); }
+      catch{
+        const match = fullText.match(/\{[\s\S]*\}/);
+        if(match){ try{ obj = JSON.parse(match[0]); }catch{} }
+      }
+      if(obj && (typeof obj.reply === 'string' || typeof obj.answer === 'string' || typeof obj.text === 'string')){
+        displayText = obj.reply || obj.answer || obj.text;
+        if(Array.isArray(obj.suggestions) && obj.suggestions.length){
+          renderSuggestions(obj.suggestions.slice(0,4), true);
+        }
+        bubbleEl.textContent = displayText;
+      }
 
-      history.push({ role:'assistant', content:[{type:'output_text', text: fullText}] });
-      return fullText;
+      history.push({ role:'assistant', content:[{type:'output_text', text: displayText}] });
+      return displayText;
     }
 
     // Utilities
@@ -403,12 +539,31 @@
       renderSuggestions([], false);
     }
 
+    // Attempt to progressively extract JSON.reply text as it streams
+    function extractReplyProgressive(buffer){
+      // Find last opening brace to reduce likelihood of parsing half JSON arrays at start
+      const idx = buffer.lastIndexOf('{');
+      if(idx === -1) return null;
+      const candidate = buffer.slice(idx);
+      // Try strict parse first
+      try{ const o = JSON.parse(candidate); return { text: o.reply || o.answer || o.text || '' }; }catch{}
+      // Fallback: try to find a partial reply value: "reply":" ... 
+      const m = candidate.match(/"(reply|answer|text)"\s*:\s*"([\s\S]*?)"\s*(,|\})/);
+      if(m){
+        // Unescape common JSON escapes progressively
+        try{ return { text: JSON.parse('"'+m[2].replace(/\\(?!["\\\/bfnrtu])/g,'\\\\')+'"') }; }catch{}
+        return { text: m[2].replace(/\\n/g,'\n').replace(/\\t/g,'\t').replace(/\\"/g,'"') };
+      }
+      return null;
+    }
+
     // ====== Suggestions ======
     function renderSuggestions(items, showLabel=true){
       suggestionsEl.innerHTML = '';
       if(items && items.length){
+        const two = items.slice(0,2);
         suggLabelEl.hidden = !showLabel;
-        for(const s of items){
+        for(const s of two){
           const btn = document.createElement('button');
           btn.className = 'sugg';
           btn.type = 'button';
@@ -440,21 +595,18 @@
 
     function defaultStarterSuggestions(){
       return [
-        'Mera CBC report simple words me samjha do',
-        'Lipid profile me LDL high ka matlab kya hota hai?',
-        'TSH/thyroid report ko explain karo',
-        'Chest X-ray report ke highlights batao'
+        'CBC report simple words me samjha do',
+        'Lipid profile me LDL high ka matlab kya?'
       ];
     }
 
     async function generateInitialSuggestions(){
       try{
-        const sys = 'Aap ek assistant ho jo sirf JSON object return karta hai jisme key `suggestions` ho aur uski value 4 chhoti Hinglish prompts ki array ho. Prompts Sehat Buddy health-report chatbot ko start karne ke liye hon. Sirf valid JSON return karna.';
+        const sys = 'Return only JSON with key `suggestions` as array of 2 short Hinglish user prompts for Sehat Buddy (patient-assistant style). They must read like what the user would type to the chatbot, not questions to the patient. Keep 8–12 words each, Indian mom friendly, general and safe. Only valid JSON.';
         const payload = {
           model: 'gpt-5-mini',
           input: [
-            { role: 'system', content: [{ type:'input_text', text: sys }] },
-            { role: 'user', content: [{ type:'input_text', text: 'Context: User Indian mom style, Hinglish. Give 4 diverse starters about lab reports, medicines, and imaging. 8-12 words each.' }] }
+            { role: 'system', content: [{ type:'input_text', text: sys }] }
           ],
           reasoning: { effort: 'low' },
           text: { format: { type: 'json_object' }, verbosity: 'low' },
@@ -463,25 +615,21 @@
         };
         const txt = await callJSONResponse(payload, API_KEY);
         const obj = JSON.parse(txt);
-        const items = Array.isArray(obj?.suggestions) ? obj.suggestions.slice(0,4) : defaultStarterSuggestions();
+         const items = Array.isArray(obj?.suggestions) ? obj.suggestions.slice(0,2) : defaultStarterSuggestions().slice(0,2);
         renderSuggestions(items, true);
       }catch{
-        renderSuggestions(defaultStarterSuggestions(), true);
+        renderSuggestions(defaultStarterSuggestions().slice(0,2), true);
       }
     }
 
-    async function generateFollowupSuggestions(lastAssistantText, lastUserText){
+    async function generateFollowupSuggestions(lastAssistantText){
       try{
-        const sys = 'Return only JSON with key `suggestions` as array of 4 short Hinglish follow-up prompts. They should help continue the same medical-report conversation. Only valid JSON.';
-        const user = JSON.stringify({
-          lastAssistant: (lastAssistantText||'').slice(0, 1200),
-          lastUser: (lastUserText||'').slice(0, 400)
-        });
+        const sys = 'Return only JSON with key `suggestions` as array of 2 short Hinglish user prompts to continue the chat with Sehat Buddy (patient-assistant style). They must be phrased as what the user should ask next, not clinician-to-patient questions. Keep 8–12 words, relevant to the assistant reply below. Only valid JSON.';
         const payload = {
           model: 'gpt-5-mini',
           input: [
             { role: 'system', content: [{ type:'input_text', text: sys }] },
-            { role: 'user', content: [{ type:'input_text', text: user }] }
+            { role: 'user', content: [{ type:'input_text', text: (lastAssistantText||'').slice(0,1200) }] }
           ],
           text: { format: { type: 'json_object' }, verbosity: 'low' },
           stream: false,
@@ -489,7 +637,7 @@
         };
         const txt = await callJSONResponse(payload, API_KEY);
         const obj = JSON.parse(txt);
-        const items = Array.isArray(obj?.suggestions) ? obj.suggestions.slice(0,4) : [];
+         const items = Array.isArray(obj?.suggestions) ? obj.suggestions.slice(0,2) : [];
         if(items.length){ renderSuggestions(items, true); }
       }catch{
         // Keep previous suggestions if follow-up generation fails
