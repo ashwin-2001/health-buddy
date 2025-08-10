@@ -356,14 +356,14 @@
 
       input.value = '';
       currentImageDataUrl = null; plusState.hidden = false; thumbWrap.hidden = true; thumbWrap.innerHTML='';
-      showThinking(true);
 
       // Collapse privacy hint after the first outgoing request
       if(privacyHint && !privacyHint.classList.contains('collapsed')){
         privacyHint.classList.add('collapsed');
       }
 
-      const aiBubble = addBubble('…', 'ai');
+      const aiBubble = addBubble('...', 'ai');
+      startDots(aiBubble);
       try{
         const responseText = await streamToBubble({
           model: route.model,
@@ -376,7 +376,7 @@
       }catch(err){
         console.error(err);
         aiBubble.innerHTML = `<b style="color:#ff6b6b">Error:</b> ${escapeHtml(err.message||err)}`;
-      }finally{ sendBtn.disabled = false; sendBtn.removeAttribute('aria-disabled'); requestInFlight = false; showThinking(false); }
+      }finally{ sendBtn.disabled = false; sendBtn.removeAttribute('aria-disabled'); requestInFlight = false; stopDots(aiBubble); }
     }
 
     function updateModelTag(model, effort){
@@ -385,14 +385,19 @@
       modelTag.textContent = `${name} • ${effortWord} reasoning`;
     }
 
-    function showThinking(isOn){
-      // Render a lightweight inline "Thinking…" loader in the last AI bubble
-      const last = chat.lastElementChild;
-      if(!(last && last.classList.contains('from-ai'))) return;
-      if(isOn){
-        last.innerHTML = '<span style="display:inline-flex; align-items:center; gap:8px"><span class="spin" style="width:14px;height:14px;border:2px solid var(--muted);border-top-color:transparent;border-radius:50%;display:inline-block;animation: sbspin .9s linear infinite"></span> Thinking…</span>';
-      }
+    let dotsTimer = null;
+    function startDots(bubbleEl){
+      stopDots();
+      if(!(bubbleEl && bubbleEl.classList.contains('from-ai'))) return;
+      const frames = ['...', '.... ....', '...', '..'];
+      let i = 0;
+      bubbleEl.textContent = frames[0];
+      dotsTimer = setInterval(()=>{
+        i = (i + 1) % frames.length;
+        bubbleEl.textContent = frames[i];
+      }, 300);
     }
+    function stopDots(){ if(dotsTimer){ clearInterval(dotsTimer); dotsTimer = null; } }
 
     // Auto model routing using gpt-5-mini (with safe fallback)
     async function routeDecision(text, hasImage){
